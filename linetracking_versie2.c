@@ -12,6 +12,16 @@ int i = 0;
 
 task accelerate();
 task deaccelerate();
+task geluid();
+
+task geluid()
+{
+	while(1)
+	{
+		playSoundFile("paardg.rso");
+		nVolume = 4;
+	}
+}
 
 task deaccelerate ()
 {
@@ -39,11 +49,13 @@ task accelerate ()
 
 task main()
 {
+	startTask(geluid);
 	while(1)
 	{
 		startTask(accelerate);
 		while (SensorValue(sonarsensor) > 5)
 		{
+			startTask(geluid);
 			while (SensorValue(sonarsensor) > 30)
 			{
 				if ((SensorValue(EyeLeft) == BLACKCOLOR) && (SensorValue(EyeRight) <= rightThreshold))
@@ -51,6 +63,7 @@ task main()
       	  	//
       	  	// Beide sensoren zien lijn, oftewel kruispunt.
       	  	//
+    				clearSounds();
     				motor[left] = 0;
     				motor[right] = 0;
    	 		}
@@ -80,8 +93,11 @@ task main()
     		}
     		wait1Msec(5);
    		}
+   		clearSounds();
    		startTask(deaccelerate);
 		}
+		clearSounds();
 		i = 0;
+
 	}
 }
