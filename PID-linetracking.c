@@ -38,9 +38,9 @@ task main()
 	int basistoestand = 50;// rand van de lijn
 	while (true)
 	{
-		while (SensorValue(zonar) > 10) // als de robot binnen 10(cm?) niks detecteerd, initialiseerd deze iteratie
+		while (SensorValue(zonar) > 10) // als de robot binnen 10(cm?) niks detecteert, initialiseert deze iteratie
 		{
-				nVolume = 4;
+				nVolume = 4;// de motor staat aan dus geluid moet aan
 				int LightValue = SensorValue(lichtsensor);
 				int error = LightValue - basistoestand; // afstand van basistoestand
 				int Turn = Kp * error; //berekent hoe sterk de motorwaarde veranderd
@@ -51,6 +51,6 @@ task main()
 		}
 		motor[motorA] = 0;
 		motor[motorB] = 0;
-		nVolume = 0;
+		nVolume = 0;// de motor staat uit dus geluid moet uit
 	}
 }
