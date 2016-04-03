@@ -8,6 +8,45 @@
 int PowerA;
 int PowerB;
 int Tp = 0; //variabele voor basissnelheid
+int basistoestand;
+
+void calibrate ()
+{
+	int sensor;
+	int min = 100;
+	int max = 0;
+	motor[motorA] = 10;
+	motor[motorB] = -10;
+	for (int i = 0; i < 600; i++)
+	{
+		sensor = SensorValue(lichtsensor);
+		if (sensor <= min)
+		{
+			min = sensor;
+		}
+		else if (sensor >= max)
+		{
+			max = sensor;
+		}
+		if (i == 99)
+		{
+			motor[motorA] = -10;
+			motor[motorB] = 10;
+		}
+		if (i == 299)
+		{
+			motor[motorA] = 10;
+			motor[motorB] = -10;
+		}
+		if (i == 499)
+		{
+			motor[motorA] = -10;
+			motor[motorB] = 10;
+		}
+		wait1Msec(10);
+	}
+	basistoestand = (max + min)/2;
+}
 
 task accelerate() // hoogt geleidelijk de basissnelheid op
 {
@@ -32,6 +71,7 @@ task geluid() // produceert geluid
 
 task main()
 {
+	calibrate();
 	startTask(geluid);
 	startTask(accelerate);
 	int Kp = 2.5; // proportionele constante
