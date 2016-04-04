@@ -5,7 +5,7 @@
 
 task biep(){
 	while(True){
-		wait10Msec(75;
+		wait10Msec(75);
 		PlaySoundFile("sheep.rso");
 	}
 }
