@@ -27,6 +27,7 @@ int bluetooth()
 
 	while (true)
   {
+    // Check to see if a message is available
     nSizeOfMessage = cCmdMessageGetSize(INBOX);
 
     if (nSizeOfMessage > kMaxSizeOfMessage)
@@ -36,10 +37,32 @@ int bluetooth()
     	nRcvBuffer[nSizeOfMessage] = '\0';
     	string s = "";
     	stringFromChars(s, (char *) nRcvBuffer);
-    	return s;
+    	if(s == "UP"){
+    			return 1;
+    	}
+     if(s == "DOWN"){
+    			return 2;
+    	}
+    	if(s == "LEFT"){
+    			return 3;
+    	}
+    	if(s == "RIGHT"){
+    			return 4;
+    	}
+    	if(s == "A"){
+    			return 5;
+    	}
+    	if(s == "B"){
+    			return 6;
+    	}
+    	if(s == "C"){
+    			return 7;
+    	}
     }
     wait1Msec(100);
   }
+  //Als er niets gebeurt 0 retourneren.
+  return 0;
 }
 
 void calibrate ()
@@ -162,7 +185,7 @@ task kruispuntdetectie()
 	if (SensorValue(kleursensor) == BLACKCOLOR)
 	{
 		stopTask(linetracking);
-		if (bluetooth() == "LEFT"){
+		if (bluetooth() == 1){
 			startTask(linksaf);
 		}
 	}
