@@ -19,6 +19,7 @@ task accelerate();
 task deaccelerate();
 task linetracking();
 task kruispuntdetectie();
+task geluid();
 
 task aan_uit ()
 {
@@ -28,11 +29,13 @@ task aan_uit ()
 		{
 			stopTask(linetracking);
 			startTask(linetracking);
+			startTask(geluid);
 		}
 		if (bluetooth_1 == 2)
 		{
 			stopTask(linetracking);
-			nVolume = 0;
+			stopTask(geluid);
+			clearSounds();
 			motor[motorA] = 0;
 			motor[motorB] = 0;
 		}
@@ -152,7 +155,8 @@ task linetracking ()
 		}
 		motor[motorA] = 0;
 		motor[motorB] = 0;
-		nVolume = 0;
+		clearSounds();
+		stopTask(geluid);
 	}
 }
 
