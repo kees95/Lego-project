@@ -60,6 +60,7 @@ int bluetooth()
     	nRcvBuffer[nSizeOfMessage] = '\0';
     	string s = "";
     	stringFromChars(s, (char *) nRcvBuffer);
+    	displayCenteredBigTextLine(4, s);
     	if(s == "UP"){
     			return 1;
     	}
