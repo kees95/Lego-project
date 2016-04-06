@@ -32,6 +32,9 @@ task aan_uit ()
 		if (bluetooth_1 == 2)
 		{
 			stopTask(linetracking);
+			nVolume = 0;
+			motor[motorA] = 0;
+			motor[motorB] = 0;
 		}
 	}
 }
@@ -264,6 +267,7 @@ task main()
 	startTask(accelerate);
 	startTask(kruispuntdetectie);
 	startTask(linetracking);
+	startTask(aan_uit);
 	while (1)
 		{
 			bluetooth_1 = bluetooth();
