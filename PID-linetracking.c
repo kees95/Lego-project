@@ -13,8 +13,6 @@ int PowerB;
 int Tp = 0; //variabele voor basissnelheid
 int basistoestand = 0;
 int stuurwaarde = 0;
-int geluid_aan = 0;
-int min;
 
 task aan_uit ();
 task accelerate();
@@ -94,7 +92,7 @@ int bluetooth()
 void calibrate ()
 {
 	int sensor;
-	min = 100;
+	int min = 100;
 	int max = 0;
 	motor[motorA] = 20;
 	motor[motorB] = -20;
@@ -140,10 +138,6 @@ task linetracking ()
 	{
 		while (SensorValue(zonar) > 10)
 		{
-				if (geluid_aan == 0)
-				{
-					startTask(geluid);
-				}
 				int LightValue = SensorValue(lichtsensor);
 				stuurwaarde = basistoestand;
 				int error = LightValue - stuurwaarde; // afstand van basistoestand
@@ -163,7 +157,6 @@ task linetracking ()
 		motor[motorA] = 0;
 		motor[motorB] = 0;
 		clearSounds();
-		geluid_aan = 0;
 		stopTask(geluid);
 	}
 }
@@ -181,15 +174,14 @@ task rechtdoor ()
 
 task linksaf ()
 {
-	int x = 0;
 	stopTask(kruispuntdetectie);
-	motor[motorA] = -5;
-	motor[motorB] = 25;
-	for (int i = 0; i <= 15; i++)
+	motor[motorA] = 15;
+	motor[motorB] = 15;
+	for (int i = 0; i <= 30; i++)
 	{
-  	wait1Msec(60);
-  	motor[motorB] = motor[motorB] + 1;
 		motor[motorA] = motor[motorA] - 1;
+		motor[motorB] = motor[motorB] + 1;
+		wait1Msec(60);
 	}
 	bluetooth_1 = 0;
 	startTask(linetracking);
@@ -199,22 +191,15 @@ task linksaf ()
 task rechtsaf ()
 {
 	stopTask(kruispuntdetectie);
-	motor[motorA] = 10;
-	motor[motorB] = 0;
-	while(1)
-	{
-	for (int i = 0; i < 25; i++)
+	motor[motorA] = 15;
+	motor[motorB] = 15;
+	for (int i = 0; i <= 30; i++)
 	{
 		motor[motorB] = motor[motorB] - 1;
 		motor[motorA] = motor[motorA] + 1;
-		if (SensorValue(lichtsensor) == min)
-		{
-			break;
-		}
 		wait1Msec(60);
 	}
-		break;
-	}
+	wait1Msec(500);
 	bluetooth_1 = 0;
 	startTask(linetracking);
 	startTask(kruispuntdetectie);
@@ -224,7 +209,7 @@ task kruispuntdetectie()
 {
 	while(1)
 	{
-	wait1Msec(1);
+
 	if (SensorValue(kleursensor) == BLACKCOLOR)
 	{
 		stopTask(linetracking);
@@ -276,14 +261,12 @@ task geluid() // produceert geluid
 {
 	while(1)
 	{
-			geluid_aan = 1;
 			playSoundFile("paardg.rso");
 	}
 }
 
 task main()
 {
-	displayCenteredBigTextLine(4, "KAAS");
 	calibrate();
 	startTask(geluid);
 	startTask(accelerate);
@@ -293,6 +276,6 @@ task main()
 	while (1)
 		{
 			bluetooth_1 = bluetooth();
-			wait10Msec(10);
+			wait10Msec(1);
 		}
 }
