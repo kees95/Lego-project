@@ -20,18 +20,18 @@ task deaccelerate();
 task linetracking();
 task kruispuntdetectie();
 task geluid();
-
-task aan_uit ()
+// tasks worden gedefinieerd
+task aan_uit () //aan/uit app functie
 {
 	while (1)
 	{
-		if (bluetooth_1 == 1)
+		if (bluetooth_1 == 1)// aan
 		{
 			stopTask(linetracking);
 			startTask(linetracking);
 			startTask(geluid);
 		}
-		if (bluetooth_1 == 2)
+		if (bluetooth_1 == 2)// uit
 		{
 			stopTask(linetracking);
 			stopTask(geluid);
@@ -42,7 +42,7 @@ task aan_uit ()
 	}
 }
 
-int bluetooth()
+int bluetooth() //functie om commando's te ontvangen van de app
 {
   TFileIOResult nBTCmdRdErrorStatus;
   int nSizeOfMessage;
@@ -50,10 +50,10 @@ int bluetooth()
 
 	while (true)
   {
-    // Check to see if a message is available
+    // kijkt of er iets ingevoerd is in de app
     nSizeOfMessage = cCmdMessageGetSize(INBOX);
 
-    if (nSizeOfMessage > kMaxSizeOfMessage)
+    if (nSizeOfMessage > kMaxSizeOfMessage)// controleerd of het bericht niet te groot is
       nSizeOfMessage = kMaxSizeOfMessage;
     if (nSizeOfMessage > 0){
     	nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
@@ -82,6 +82,7 @@ int bluetooth()
     	if(s == "C"){
     			return 7;
     	}
+    	//hierbij worden ontvangen waardes omgezet naar integers
     }
     wait1Msec(100);
   }
@@ -89,7 +90,7 @@ int bluetooth()
   return 0;
 }
 
-void calibrate ()
+void calibrate ()//calibreren van de lichtsensor
 {
 	int sensor;
 	int min = 100;
@@ -99,11 +100,11 @@ void calibrate ()
 	for (int i = 0; i < 600; i++)
 	{
 		sensor = SensorValue(lichtsensor);
-		if (sensor <= min)
+		if (sensor <= min)//zwart
 		{
 			min = sensor;
 		}
-		else if (sensor >= max)
+		else if (sensor >= max)//wit
 		{
 			max = sensor;
 		}
@@ -124,10 +125,10 @@ void calibrate ()
 		}
 		wait1Msec(10);
 	}
-	basistoestand = (max + min)/2;
+	basistoestand = (max + min)/2;//op basis van hoeveel licht er is past de kalibratie zich aan
 }
 
-task linetracking ()
+task linetracking ()// taak voor het volgen van de lijn mbv PID
 {
 	int Kp = 2;
 	int Ki = 0.2;
@@ -136,7 +137,7 @@ task linetracking ()
 	int vorige_error = 0;
 	while (true)
 	{
-		while (SensorValue(zonar) > 10)
+		while (SensorValue(zonar) > 10)//als de sonar binnen 10cm niks ziet word de volgende code uitgevoerd:
 		{
 				int LightValue = SensorValue(lichtsensor);
 				stuurwaarde = basistoestand;
@@ -157,11 +158,11 @@ task linetracking ()
 		motor[motorA] = 0;
 		motor[motorB] = 0;
 		clearSounds();
-		stopTask(geluid);
+		stopTask(geluid);//als de motoren uit zijn stopt het geluid
 	}
 }
 
-task rechtdoor ()
+task rechtdoor ()// gaat rechtdoor over een kruispunt als er niks aangegeven is in de app
 {
 	while (SensorValue(kleursensor) == BLACKCOLOR)
 	{
@@ -172,7 +173,7 @@ task rechtdoor ()
 	startTask(linetracking);
 }
 
-task linksaf ()
+task linksaf ()// gaat linksaf als dit aangegeven is in de app
 {
 	stopTask(kruispuntdetectie);
 	motor[motorA] = 15;
@@ -188,7 +189,7 @@ task linksaf ()
 	startTask(kruispuntdetectie);
 }
 
-task rechtsaf ()
+task rechtsaf ()//gaat rechtsaf als dit aangegeven is in de app
 {
 	stopTask(kruispuntdetectie);
 	motor[motorA] = 15;
@@ -205,12 +206,12 @@ task rechtsaf ()
 	startTask(kruispuntdetectie);
 }
 
-task kruispuntdetectie()
+task kruispuntdetectie()//controleerd of er een kruispunt is en kijkt wat er in de taak bluetooth voor waarde is
 {
 	while(1)
 	{
 
-	if (SensorValue(kleursensor) == BLACKCOLOR)
+	if (SensorValue(kleursensor) == BLACKCOLOR)// als de kleurensensor zwart ziet word er een kruispunt gedetecteerd
 	{
 		stopTask(linetracking);
 		if (bluetooth_1 == 3)
@@ -241,7 +242,7 @@ task accelerate() // hoogt geleidelijk de basissnelheid op
 	stopTask(accelerate);
 }
 
-task deaccelerate()
+task deaccelerate()// verlaagt geleidelijk de basissnelheid
 {
 	stopTask(accelerate);
 	int j = Tp;
@@ -249,7 +250,7 @@ task deaccelerate()
 	{
 		wait1Msec(80);
 		Tp = i;
-		if (SensorValue(zonar) <= 10)
+		if (SensorValue(zonar) <= 10)//stopt de functie als de sonar iets ziet
 			break;
 	}
 	Tp = 0;
@@ -261,11 +262,11 @@ task geluid() // produceert geluid
 {
 	while(1)
 	{
-			playSoundFile("paardg.rso");
+			playSoundFile("paardg.rso");//maakt paard gallop geluid
 	}
 }
 
-task main()
+task main()//de tasks worden aangeroepen
 {
 	calibrate();
 	startTask(geluid);
